@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import pandas as pd
 import cv2
@@ -5,10 +6,8 @@ from torchvision import transforms
 from torch.utils.data import DataLoader, Dataset
 
 # Required constants.
-ROOT_DIR = os.path.join('..', 'input', 'Human Action Recognition', 'train')
-CSV_PATH = os.path.join(
-    '..', 'input', 'Human Action Recognition', 'Training_set.csv'
-)
+ROOT_DIR = os.path.join("..", "input", "Human Action Recognition", "train")
+CSV_PATH = os.path.join("..", "input", "Human Action Recognition", "Training_set.csv")
 TRAIN_RATIO = 85
 VALID_RATIO = 100 - TRAIN_RATIO
 IMAGE_SIZE = 224  # Image size of resize when applying transforms.
@@ -17,36 +16,34 @@ NUM_WORKERS = 4  # Number of parallel processes for data preparation.
 
 # Training transforms
 def get_train_transform(image_size):
-    train_transform = transforms.Compose([
-        transforms.ToPILImage(),
-        transforms.Resize((image_size, image_size)),
-        transforms.RandomHorizontalFlip(p=0.5),
-        transforms.RandomRotation(35),
-        transforms.RandomAdjustSharpness(sharpness_factor=2, p=0.5),
-        transforms.GaussianBlur(kernel_size=3),
-        transforms.RandomGrayscale(p=0.5),
-        transforms.RandomRotation(45),
-        transforms.RandomAutocontrast(p=0.5),
-        transforms.ToTensor(),
-        transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        )
-    ])
+    train_transform = transforms.Compose(
+        [
+            transforms.ToPILImage(),
+            transforms.Resize((image_size, image_size)),
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomRotation(35),
+            transforms.RandomAdjustSharpness(sharpness_factor=2, p=0.5),
+            transforms.GaussianBlur(kernel_size=3),
+            transforms.RandomGrayscale(p=0.5),
+            transforms.RandomRotation(45),
+            transforms.RandomAutocontrast(p=0.5),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ]
+    )
     return train_transform
 
 
 # Validation transforms
 def get_valid_transform(image_size):
-    valid_transform = transforms.Compose([
-        transforms.ToPILImage(),
-        transforms.Resize((image_size, image_size)),
-        transforms.ToTensor(),
-        transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        )
-    ])
+    valid_transform = transforms.Compose(
+        [
+            transforms.ToPILImage(),
+            transforms.Resize((image_size, image_size)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ]
+    )
     return valid_transform
 
 
@@ -84,7 +81,16 @@ class CustomDataset(Dataset):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image_tensor = self.transform(image)
         class_num = self.class_names.index(label)
-        return {
-            'image': image_tensor,
-            'label': class_num
-        }
+        return {"image": image_tensor, "label": class_num}
+
+
+def get_data_loaders(dataset_train, dataset_valid, batch_size):
+    """
+    Prepares the training and validation data loaders.
+    :param dataset_train: The training dataset.
+    :param dataset_valid: The validation dataset.
+    Returns the training and validation data loaders.
+    """
+    train_loader = DataLoader(dataset_train, batch_size=batch_size, shuffle=True, num_workers=NUM_WORKERS)
+    valid_loader = DataLoader(dataset_valid, batch_size=batch_size, shuffle=False, num_workers=NUM_WORKERS)
+    return train_loader, valid_loader
