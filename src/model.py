@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import torch
 from torchvision import models
 import torch.nn as nn
 

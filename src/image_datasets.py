@@ -93,4 +93,5 @@ def get_data_loaders(dataset_train, dataset_valid, batch_size):
     """
     train_loader = DataLoader(dataset_train, batch_size=batch_size, shuffle=True, num_workers=NUM_WORKERS)
     valid_loader = DataLoader(dataset_valid, batch_size=batch_size, shuffle=False, num_workers=NUM_WORKERS)
+
     return train_loader, valid_loader
