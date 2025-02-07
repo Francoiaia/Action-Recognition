@@ -6,8 +6,8 @@ from torchvision import transforms
 from torch.utils.data import DataLoader, Dataset
 
 # Required constants.
-ROOT_DIR = os.path.join("..", "input", "Human Action Recognition", "train")
-CSV_PATH = os.path.join("..", "input", "Human Action Recognition", "Training_set.csv")
+ROOT_DIR = os.path.join("../..", "input", "Human Action Recognition", "train")
+CSV_PATH = os.path.join("../..", "input", "Human Action Recognition", "Training_set.csv")
 TRAIN_RATIO = 85
 VALID_RATIO = 100 - TRAIN_RATIO
 IMAGE_SIZE = 224  # Image size of resize when applying transforms.

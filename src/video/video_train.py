@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import time
 from datetime import datetime
 
 import torch
@@ -10,8 +9,8 @@ import os
 import numpy as np
 import random
 from tqdm.auto import tqdm
-from model import build_model
-from image_datasets import get_data_loaders, shuffle_csv, CustomDataset
+from src.model import build_model
+from video_dataset import get_data_loaders, shuffle_csv, VideoDataset
 from utils import save_model, save_plots, SaveBestModel
 from class_names import class_names
 
@@ -52,12 +51,12 @@ def train(model, trainloader, optimizer, criterion):
     prog_bar = tqdm(trainloader, total=len(trainloader), bar_format="{l_bar}{bar:20}{r_bar}{bar:-20b}")
     for i, data in enumerate(prog_bar):
         counter += 1
-        image, labels = data["image"], data["label"]
-        image = image.to(device)
+        video, labels = data["video"], data["label"]
+        video = video.to(device)
         labels = labels.to(device)
         optimizer.zero_grad()
         # Forward pass.
-        outputs = model(image)
+        outputs = model(video)
         # Calculate the loss.
         loss = criterion(outputs, labels)
         train_running_loss += loss.item()
@@ -87,11 +86,11 @@ def validate(model, testloader, criterion):
         for i, data in enumerate(prog_bar):
             counter += 1
 
-            image, labels = data["image"], data["label"]
-            image = image.to(device)
+            video, labels = data["video"], data["label"]
+            video = video.to(device)
             labels = labels.to(device)
             # Forward pass.
-            outputs = model(image)
+            outputs = model(video)
             # Calculate the loss.
             loss = criterion(outputs, labels)
             valid_running_loss += loss.item()
@@ -132,19 +131,19 @@ class EarlyStopping:
 if __name__ == "__main__":
     early_stopping = EarlyStopping(patience=10)
     start_time = datetime.now()
-    batch_size = 64
+    batch_size = 16
     lr = 0.001
     epochs = 30
     is_scheduler = True
     # Create a directory with the model name for outputs.
-    out_dir = os.path.join("..", "outputs")
+    out_dir = os.path.join("../..", "outputs")
     os.makedirs(out_dir, exist_ok=True)
     # Load the training and validation datasets.
     train_df, valid_df = shuffle_csv()
-    dataset_train = CustomDataset(train_df, class_names, is_train=True)
-    dataset_valid = CustomDataset(valid_df, class_names, is_train=False)
-    print(f"[INFO]: Number of training images: {len(dataset_train)}")
-    print(f"[INFO]: Number of validation images: {len(dataset_valid)}")
+    dataset_train = VideoDataset(train_df, class_names, is_train=True)
+    dataset_valid = VideoDataset(valid_df, class_names, is_train=False)
+    print(f"[INFO]: Number of training videos: {len(dataset_train)}")
+    print(f"[INFO]: Number of validation videos: {len(dataset_valid)}")
     print(f"[INFO]: Classes: {class_names}")
     # Load the training and validation data loaders.
     train_loader, valid_loader = get_data_loaders(dataset_train, dataset_valid, batch_size=batch_size)

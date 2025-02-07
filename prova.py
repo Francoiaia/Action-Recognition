@@ -34,4 +34,4 @@ def create_dataset_csv(root_dir, output_file):
 
 
 # Use the function
-create_dataset_csv("C:/work/repo/Datasets/magic_fall_dataset", "magic_fall_dataset_2class.csv")
+create_dataset_csv("C:/work/repo/Datasets/magic_fall_dataset", "src/video/magic_fall_dataset_2class_train.csv")

@@ -9,7 +9,7 @@ import os
 import torch.nn.functional as F
 import numpy as np
 
-from model import build_model
+from src.model import build_model
 from class_names import class_names as CLASS_NAMES
 
 # construct the argumet parser to parse the command line arguments
@@ -18,12 +18,12 @@ parser.add_argument("-i", "--input", default="input/video_1.mp4", help="path to 
 parser.add_argument(
     "-w",
     "--weights",
-    default="../outputs/best_model.pth",
+    default="outputs/best_model_ovh.pth",
     help="path to the model weights",
 )
 args = parser.parse_args()
 
-OUT_DIR = "../outputs/inference_results/video_outputs"
+OUT_DIR = "../../outputs/inference_results/video_outputs"
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # set the computation device
